@@ -1,13 +1,17 @@
 package com.example.leatestmovies_project2;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 
 
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,22 +31,27 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements movieDataDesigner.movieDataOnClickListner, AdapterView.OnItemSelectedListener {
 
     movieDataDesigner popMoviesAdapter ;
-    movieDataDesigner rateMoviesAdapter ;
 
-    TextView error_massage,sortText;
+
+
+    public TextView error_massage,sortText;
     RecyclerView mRecycle ;
+    ProgressBar progressBar ;
     Spinner sort;
-    FetchData pop;
+    com.example.leatestmovies_project2.Data.dataBase dataBase;
 
     String popular ="popular";
     String top_rated="top_rated";
+    String type;
 
-    List<movie> popMovies = new ArrayList<>();
-    List<movie> rateMovies = new ArrayList<>();
+    List<favMovieModel> popMovies = new ArrayList<>();
+    List<favMovieModel> rateMovies = new ArrayList<>();
 
 
-
-
+    List<favMovieModel> favMovies = new ArrayList<>();
+    private boolean onRestart;
+    private favMoviesViewModel viewModel;
+    private int position;
 
 
     @Override
@@ -52,15 +61,11 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
         sort=findViewById(R.id.sort);
         error_massage = findViewById(R.id.error);
         error_massage.setVisibility(View.GONE);
+        progressBar = findViewById(R.id.progrss);
+
+
 
         sortText = findViewById(R.id.sort_by);
-
-
-        pop = new FetchData();
-        pop.execute();
-
-
-        sort.setVisibility(View.GONE);
 
 
 
@@ -75,13 +80,11 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
 
         GridLayoutManager manager = new GridLayoutManager(MainActivity.this,4);
 
-
+    dataBase.getDataBase(this);
 
         mRecycle.setLayoutManager(manager);
-        popMoviesAdapter = new movieDataDesigner(MainActivity.this);
-        rateMoviesAdapter= new movieDataDesigner(MainActivity.this);
+        popMoviesAdapter = new movieDataDesigner(MainActivity.this,favMovies);
         mRecycle.setAdapter(popMoviesAdapter);
-
 
         sort.setOnItemSelectedListener(this);
 
@@ -102,21 +105,10 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
 
 
 
-    public void onClickListner(movie movie) {
+    public void onClickListner(favMovieModel movie,int pos) {
         Intent intent = new Intent(this,movieData.class);
 
-        Bundle bundle = new Bundle();
-
-       Seri seri = new Seri();
-       seri.setOriginal_title(movie.getOriginal_title());
-       seri.setImage(movie.getImage());
-       seri.setPlot(movie.getPlot());
-       seri.setRating(movie.getRating());
-       seri.setRelease_date(movie.getRelease_date());
-
-       bundle.putSerializable("movie",seri);
-
-       intent.putExtras(bundle);
+        intent.putExtra("movie",movie);
 
 
         startActivity(intent);
@@ -127,8 +119,71 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        UIUpdate(position);
 
+
+        this.position = position;
+        Log.v("position : ", String.valueOf(position));
+        viewModel = ViewModelProviders.of(this).get(favMoviesViewModel.class);
+type=popular;
+        if (position !=2) {
+            favMovies.clear();
+            popMoviesAdapter.notifyDataSetChanged();
+            if (position == 1) {
+                type = top_rated;
+
+            }
+//
+
+
+
+
+            ((favMoviesViewModel) viewModel).getLiveData(false, type).observe(this, new Observer<List<favMovieModel>>() {
+                @Override
+                public void onChanged(@Nullable List<favMovieModel> favMovieModels) {
+//                    Log.v("SortmoviesLenth", String.valueOf(favMovieModels.size()));
+
+                    if (favMovieModels != null && favMovieModels.size() !=0) {
+                        progressBar.setVisibility(View.GONE);
+
+                        favMovies.clear();
+                        popMoviesAdapter.imgArray.clear();
+//                        Log.v("First",popMoviesAdapter.imgArray.get(0).getOriginal_title());
+                        popMoviesAdapter.notifyDataSetChanged();
+                        favMovies.addAll(favMovieModels);
+
+                        popMoviesAdapter.notifyDataSetChanged();
+                    }else {
+                        error();
+                    }
+//                    firspopMovie = favMovies.get(0);
+                }
+            });
+
+        } else if (position == 2 ) {
+            favMovies.clear();
+            popMoviesAdapter.notifyDataSetChanged();
+            Log.v("favOnCeate", "yes");
+            ((favMoviesViewModel) viewModel).getLiveData(true,null).observe(this, new Observer<List<favMovieModel>>() {
+                @Override
+                public void onChanged(@Nullable List<favMovieModel> favMovieModels) {
+//                    Log.v(String.valueOf(favMovieModels.size()), favMovieModels.toString());
+                    if (favMovieModels != null && favMovieModels.size() !=0) {
+                        progressBar.setVisibility(View.GONE);
+                        mRecycle.setVisibility(View.VISIBLE);
+                        error_massage.setVisibility(View.GONE);
+                        favMovies.clear();
+                        favMovies.addAll(favMovieModels);
+                        popMoviesAdapter.notifyDataSetChanged();
+                    }else {
+                        error();
+                    }
+
+
+                }
+            });
+//
+
+        }
     }
 
     @Override
@@ -137,23 +192,24 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
     }
 
 
-    public class FetchData extends AsyncTask<Void,Void, List<movie>>{
-        ProgressBar bar =findViewById(R.id.prog);
+    public class FetchData extends AsyncTask<Void, Void, List<favMovieModel>> {
         @Override
         protected void onPreExecute() {
-            bar.setVisibility(View.VISIBLE);
+//            bar.setVisibility(View.VISIBLE);
             sort.setVisibility(View.GONE);
+            progressBar=findViewById(R.id.progrss);
+
 
             super.onPreExecute();
         }
 
         @Override
-        protected List<movie> doInBackground(Void ...voids) {
+        protected List<favMovieModel> doInBackground(Void ...voids) {
 
             Json jsonPop,jsonRate;
 
-                jsonPop = new Json(popular);
-                jsonRate = new Json(top_rated);
+                jsonPop = new Json(popular,false,false);
+                jsonRate = new Json(top_rated,false,false);
 
             String jsonPopData=null;
             String jsonRateData=null;
@@ -181,15 +237,15 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
         }
 
         @Override
-        protected void onPostExecute(List<movie> movies) {
-            bar.setVisibility(View.GONE);
-
+        protected void onPostExecute(List<favMovieModel> movies) {
+//            bar.setVisibility(View.GONE);
             sortText.setVisibility(View.VISIBLE);
             sort.setVisibility(View.VISIBLE);
 
-            rateMoviesAdapter.setMoviesList(rateMovies);
-
-            popMoviesAdapter.setMoviesList(popMovies);
+//            rateMoviesAdapter.setMoviesList(rateMovies);
+            favMovies.clear();
+            favMovies.addAll(popMovies);
+            popMoviesAdapter.notifyDataSetChanged();
 
 
 
@@ -203,35 +259,53 @@ public class MainActivity extends AppCompatActivity implements movieDataDesigner
         }
     }
 
-    private void UIUpdate(int i) {
 
-        if (i==0){
-            if (popMovies.size() == 0){
-                error();
-            }else {
 
-                mRecycle.setVisibility(View.VISIBLE);
-                mRecycle.setAdapter(popMoviesAdapter);
-            }
 
-        }else {
-            if (rateMovies.size() == 0){
-                error();
-            }else {
-                mRecycle.setAdapter(rateMoviesAdapter);
-                mRecycle.setVisibility(View.VISIBLE);
-            }
 
+
+    public void error(){
+//        if (popMoviesAdapter.imgArray.size() == 0) {
+
+            progressBar.setVisibility(View.GONE);
+
+            mRecycle.setVisibility(View.GONE);
+            error_massage.setText("No Data");
+            error_massage.setVisibility(View.VISIBLE);
+//        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (position == 2) {
+            favMovies.clear();
+            popMoviesAdapter.notifyDataSetChanged();
+            Log.v("fav", "yes");
+            ((favMoviesViewModel) viewModel).getLiveData(true, null).observe(this, new Observer<List<favMovieModel>>() {
+                @Override
+                public void onChanged(@Nullable List<favMovieModel> favMovieModels) {
+                    if (favMovieModels != null && favMovieModels.size() !=0) {
+                        progressBar.setVisibility(View.GONE);
+
+                        favMovies.clear();
+                        favMovies.addAll(favMovieModels);
+                        popMoviesAdapter.notifyDataSetChanged();
+
+                    }else {
+                        error();
+                    }
+
+                }
+            });
         }
 
 
+    }
 
-    }
-    public void error(){
-        mRecycle.setVisibility(View.GONE);
-        error_massage.setText("No Data");
-        error_massage.setVisibility(View.VISIBLE);
-    }
+
+
 
 
 }

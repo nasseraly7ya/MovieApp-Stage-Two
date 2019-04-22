@@ -18,7 +18,7 @@
         android:id="@+id/sort_by"
         android:textColor="@color/colorAccent"
 
-android:visibility="gone"        />
+     />
 
  <Spinner
      android:layout_width="wrap_content"
@@ -26,18 +26,21 @@ android:visibility="gone"        />
      android:id="@+id/sort"
      android:layout_toRightOf="@id/sort_by"
 
+
+
      >
 
 
  </Spinner>
 </RelativeLayout>
+
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/Recycle"
 android:paddingLeft="30dp"
 
@@ -47,14 +50,21 @@ android:paddingLeft="30dp"
 
 
     </android.support.v7.widget.RecyclerView>
-</ScrollView>
 
-    <ProgressBar
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:id="@+id/prog"
-        />
+</ScrollView>
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="NO DATA"
+    android:visibility="gone"
+    />
+
+    <!--<ProgressBar-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:id="@+id/prog"-->
+        <!--/>-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,6 +74,12 @@ android:paddingLeft="30dp"
 
         android:text="No Data"
         android:id="@+id/error"
+        />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/progrss"
         />
 
 

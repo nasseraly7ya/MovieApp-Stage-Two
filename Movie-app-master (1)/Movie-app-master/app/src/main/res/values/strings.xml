@@ -4,6 +4,8 @@
     <string-array name="sort">
         <item name="popular"> Popular</item>
         <item name="top_rated">Top-Rated</item>
+        <item name="favorite">Favorite</item>
+
     </string-array>
 
 </resources>

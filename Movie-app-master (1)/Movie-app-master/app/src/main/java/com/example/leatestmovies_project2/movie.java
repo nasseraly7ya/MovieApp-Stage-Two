@@ -8,6 +8,15 @@ public class movie {
     private String plot;
     private double rating;
     private String release_date;
+
+    public String getImageBase() {
+        return ImageBase;
+    }
+
+    public void setImageBase(String imageBase) {
+        ImageBase = imageBase;
+    }
+
     private String ImageBase ="http://image.tmdb.org/t/p/w185/";
 
     public movie(String original_title, String image, String plot, double rating, String release_date) {
