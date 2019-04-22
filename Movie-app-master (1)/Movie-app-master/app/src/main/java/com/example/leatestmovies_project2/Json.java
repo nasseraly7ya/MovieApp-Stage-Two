@@ -17,6 +17,10 @@ import java.util.Scanner;
 
 
 public class Json {
+    /**
+    put your API_KEY
+    */
+    private String API_key=null;
     private  boolean Review  ;
     private  boolean video;
     String Original_Title_key = "original_title";
@@ -33,7 +37,7 @@ public class Json {
 
     private String theMovieDB="api.themoviedb.org";
     private String path="/3/movie";
-    private String apikey="a604e2aff83532e590c126dfa7df1b6a";
+    private String apikey=API_key;
     private String sortType;
     private String id="id";
     private List<com.example.leatestmovies_project2.Review> reviews =new ArrayList<>();
