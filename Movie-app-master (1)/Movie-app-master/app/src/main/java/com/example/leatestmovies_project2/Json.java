@@ -29,7 +29,6 @@ public class Json {
     String overview_key = "overview";
     String vote_average_key = "vote_average";
 
-//    https://api.themoviedb.org/3/movie/popular&apikey=a604e2aff83532e590c126dfa7df1b6a
 
 
     List<favMovieModel> movies= new ArrayList<>();
