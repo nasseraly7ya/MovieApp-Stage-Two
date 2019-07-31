@@ -137,17 +137,15 @@ type=popular;
 
 
 
-            ((favMoviesViewModel) viewModel).getLiveData(false, type).observe(this, new Observer<List<favMovieModel>>() {
+            ( viewModel).getLiveData(false, type).observe(this, new Observer<List<favMovieModel>>() {
                 @Override
                 public void onChanged(@Nullable List<favMovieModel> favMovieModels) {
-//                    Log.v("SortmoviesLenth", String.valueOf(favMovieModels.size()));
 
                     if (favMovieModels != null && favMovieModels.size() !=0) {
                         progressBar.setVisibility(View.GONE);
 
                         favMovies.clear();
                         popMoviesAdapter.imgArray.clear();
-//                        Log.v("First",popMoviesAdapter.imgArray.get(0).getOriginal_title());
                         popMoviesAdapter.notifyDataSetChanged();
                         favMovies.addAll(favMovieModels);
 
@@ -155,7 +153,6 @@ type=popular;
                     }else {
                         error();
                     }
-//                    firspopMovie = favMovies.get(0);
                 }
             });
 
@@ -192,72 +189,6 @@ type=popular;
     }
 
 
-    public class FetchData extends AsyncTask<Void, Void, List<favMovieModel>> {
-        @Override
-        protected void onPreExecute() {
-//            bar.setVisibility(View.VISIBLE);
-            sort.setVisibility(View.GONE);
-            progressBar=findViewById(R.id.progrss);
-
-
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<favMovieModel> doInBackground(Void ...voids) {
-
-            Json jsonPop,jsonRate;
-
-                jsonPop = new Json(popular,false,false);
-                jsonRate = new Json(top_rated,false,false);
-
-            String jsonPopData=null;
-            String jsonRateData=null;
-
-
-            try {
-
-                jsonPopData= jsonPop.connection();
-                if(jsonPopData != null)
-                popMovies= jsonPop.extractData(jsonPopData);
-                jsonRateData = jsonRate.connection();
-                if (jsonRateData != null)
-                rateMovies=jsonRate.extractData(jsonRateData);
-
-
-                return popMovies;
-            }  catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<favMovieModel> movies) {
-//            bar.setVisibility(View.GONE);
-            sortText.setVisibility(View.VISIBLE);
-            sort.setVisibility(View.VISIBLE);
-
-//            rateMoviesAdapter.setMoviesList(rateMovies);
-            favMovies.clear();
-            favMovies.addAll(popMovies);
-            popMoviesAdapter.notifyDataSetChanged();
-
-
-
-
-
-
-
-            super.onPostExecute(movies);
-
-
-        }
-    }
 
 
 
@@ -265,14 +196,12 @@ type=popular;
 
 
     public void error(){
-//        if (popMoviesAdapter.imgArray.size() == 0) {
 
             progressBar.setVisibility(View.GONE);
 
             mRecycle.setVisibility(View.GONE);
             error_massage.setText("No Data");
             error_massage.setVisibility(View.VISIBLE);
-//        }
     }
 
     @Override
@@ -283,7 +212,7 @@ type=popular;
             favMovies.clear();
             popMoviesAdapter.notifyDataSetChanged();
             Log.v("fav", "yes");
-            ((favMoviesViewModel) viewModel).getLiveData(true, null).observe(this, new Observer<List<favMovieModel>>() {
+            ( viewModel).getLiveData(true, null).observe(this, new Observer<List<favMovieModel>>() {
                 @Override
                 public void onChanged(@Nullable List<favMovieModel> favMovieModels) {
                     if (favMovieModels != null && favMovieModels.size() !=0) {

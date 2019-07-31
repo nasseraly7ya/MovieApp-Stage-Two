@@ -51,43 +51,12 @@ public class movieDataDesigner extends RecyclerView.Adapter<movieDataDesigner.gr
     @Override
     public void onBindViewHolder(@NonNull gridList gridList, int i) {
         String imglinke=imgArray.get(i).getImageLink();
-//        Log.v("item",imgArray.get(i).getOriginal_title());
         Log.v(String.valueOf(i) + " : itemImage", imgArray.get(i).getOriginal_title() + "  :  " + imglinke);
 
         Picasso.get().load(imglinke).into(gridList.imgBtn);
     }
 
-//    @Override
-//    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder,int i) {
-//        String imglinke=imgArray.get(i).getImageLink();
-////        Log.v("item",imgArray.get(i).getOriginal_title());
-//            Log.v(String.valueOf(i) + " : itemImage", imgArray.get(i).getOriginal_title() + "  :  " + imglinke);
-//
-//        Picasso.get().load(imglinke).into(imgBtn);
-//        Picasso.get().load(imglinke).into(imgBtn);
-//
-//        Log.v(String.valueOf(i) + " : itemImage", imgArray.get(i).getOriginal_title() + "  :  " + imglinke);
-//
-//
-//
-//
-//    }
 
-//    @Override
-//    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i, @NonNull List payloads) {
-//        super.onBindViewHolder(holder, i, payloads);
-//
-//        String imglinke=imgArray.get(i).getImageLink();
-////        Log.v("item",imgArray.get(i).getOriginal_title());
-//        Log.v(String.valueOf(i) + " : itemImage", imgArray.get(i).getOriginal_title() + "  :  " + imglinke);
-//
-//        Picasso.get().load(imglinke).into(imgBtn);
-//        Picasso.get().load(imglinke).into(imgBtn);
-//
-//        Log.v(String.valueOf(i) + " : itemImage", imgArray.get(i).getOriginal_title() + "  :  " + imglinke);
-//
-//
-//    }
 
     @Override
     public int getItemCount() {
